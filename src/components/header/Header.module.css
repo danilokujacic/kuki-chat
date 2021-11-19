@@ -1,0 +1,21 @@
+.avatar {
+    width: 40px;
+    height: 40px;
+}
+.avatar img {
+    object-fit: cover;
+}
+.home-container {
+    padding: 8px 10px;
+}
+.chevron-button {
+    border: none;
+    background: none;
+    text-align: initial;
+}
+.profile-modal {
+    position: absolute;
+    bottom: -84px;
+    left: 0px;
+    width: 100%;
+}

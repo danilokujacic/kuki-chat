@@ -1,0 +1,13 @@
+.register-info {
+    position: relative;
+    height: calc(100vh - 64px);
+}
+.register-info img {
+    transform: rotateX(160deg) rotateZ(40deg);
+    width: 150px;
+    top: -10px;
+    position: absolute;
+    right: 35px;
+    fill: #c4b5fd;
+    color: #c4b5fd;
+}
