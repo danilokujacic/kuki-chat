@@ -29,7 +29,7 @@ const Chat: FunctionComponent = () => {
             socket.on('receive_message', (data: TChat[]) => {
                 setChat([...(Array.isArray(chat) ? chat : []), ...data]);
                 if (authData.user) {
-                    fetch('http://localhost:9000/chat/0', {
+                    fetch(`${process.env.REACT_APP_SERVER_HOST}/chat/0`, {
                         method: 'POST',
                         headers: {
                             'Content-type': 'application/json',
@@ -49,9 +49,13 @@ const Chat: FunctionComponent = () => {
             chatRef.current.scrollTop = chatRef.current.scrollHeight;
         }
         if (!chat || !chat.length) {
-            fetch('http://localhost:9000/chat/0')
+            fetch(`${process.env.REACT_APP_SERVER_HOST}/chat/0`)
                 .then((res: any) => res.json())
-                .then((data: any) => setChat(data));
+                .then((data: any) => {
+                    if (!data.error) {
+                        setChat(data);
+                    }
+                });
         }
     }, [chat]);
 

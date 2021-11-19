@@ -21,7 +21,7 @@ const Header: FunctionComponent = () => {
                 {data.user ? (
                     <HeaderProfile user={data.user} logout={data.logout} />
                 ) : (
-                    <button onClick={data.loginWithPopup}>Login</button>
+                    <button onClick={data.loginWithRedirect}>Login</button>
                 )}
             </div>
         </div>
