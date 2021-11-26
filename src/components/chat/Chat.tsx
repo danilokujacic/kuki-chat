@@ -1,64 +1,27 @@
-import { FunctionComponent, useEffect, useRef, useState } from 'react';
-import { useSocket } from '../../context/socket';
+import { FunctionComponent, useState } from 'react';
 import MessageSend from './components/MessageSend';
 import styles from './Chat.module.css';
 import MessageNode from './components/MessageNode';
-import { useAuth0 } from '@auth0/auth0-react';
+import useChat from '../../hooks/useChat';
+
+export type TUser = { picture: string; username: string };
 
 export type TChat = {
-    profile: {
-        picture: string;
-        username: string;
-    };
+    profile: TUser;
     message: string;
     date: Date;
     chatDate: string;
+    seen: TUser[];
 };
 
 const Chat: FunctionComponent = () => {
-    const socket = useSocket();
-    const authData = useAuth0();
-    const chatRef = useRef<HTMLDivElement | null>(null);
-    const [chat, setChat] = useState<TChat[] | null | 'NOT_CONNECTED'>(null);
+    const [chatRef, setChatRef] = useState<HTMLDivElement | null>(null);
+    const { chat, user } = useChat({ containerRef: chatRef });
     let chatTemplate;
 
-    useEffect(() => {
-        if (authData.user) {
-            socket.auth = { username: authData.user.nickname };
-            socket.connect();
-            socket.on('receive_message', (data: TChat[]) => {
-                setChat([...(Array.isArray(chat) ? chat : []), ...data]);
-                if (authData.user) {
-                    fetch(`${process.env.REACT_APP_SERVER_HOST}/chat/0`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            chats: data,
-                            users: [authData.user.nickname || ''],
-                        }),
-                    });
-                }
-            });
-        }
-    }, [authData]);
-
-    useEffect(() => {
-        if (chatRef.current) {
-            chatRef.current.scrollTop = chatRef.current.scrollHeight;
-        }
-        if (!chat || !chat.length) {
-            fetch(`${process.env.REACT_APP_SERVER_HOST}/chat/0`)
-                .then((res: any) => res.json())
-                .then((data: any) => {
-                    if (!data.error) {
-                        setChat(data);
-                    }
-                });
-        }
-    }, [chat]);
-
+    if (!user) {
+        return <></>;
+    }
     if (!chat) {
         chatTemplate = (
             <div className={`${styles['chat-log']} text-gray-600 text-2xl`}>
@@ -71,10 +34,22 @@ const Chat: FunctionComponent = () => {
     } else {
         chatTemplate = (
             <div
-                ref={chatRef}
+                ref={setChatRef}
+                style={{
+                    height:
+                        screen.width < 768
+                            ? window.innerHeight - 119
+                            : undefined,
+                }}
                 className={`${styles['chat-log']} flex flex-col h-11/12 overflow-y-scroll`}>
                 {chat.map((item, index) => (
-                    <MessageNode key={index} index={index} item={item} />
+                    <MessageNode
+                        user={user}
+                        key={index}
+                        index={index}
+                        item={item}
+                        isLastMessage={chat.length - 1 === index}
+                    />
                 ))}
             </div>
         );
