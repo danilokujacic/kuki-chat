@@ -1,8 +1,14 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
-import { TChat, TUser } from '../components/chat/Chat';
+import {
+    isNotification,
+    TChat,
+    TNotification,
+    TUser,
+} from '../components/chat/Chat';
 import { useSocket } from '../context/socket';
 import { getChat } from '../client/chat';
+import { formatWelcomeMessage } from '../utils/formatWelcomeMessage';
 
 interface IuseChat {
     containerRef: HTMLDivElement | null;
@@ -21,11 +27,15 @@ const useChat = ({ containerRef }: IuseChat) => {
     const data = useAuth0();
     const socket = useSocket();
     const [chat, setChat] = useState<TChat[] | null | 'NOT_CONNECTED'>(null);
+    const [notification, setNotification] = useState<TNotification | null>(
+        null,
+    );
 
     const triggerSeen = () => {
         if (!chat || !chat.length || typeof chat === 'string') return;
         const { picture, nickname } = data.user!;
         const lastChat = chat[chat.length - 1];
+        if (isNotification(lastChat)) return;
         if (lastChat.profile.username !== nickname) {
             const indexUser = lastChat.seen.findIndex(
                 (el: TUser) => el.username === nickname,
@@ -41,6 +51,12 @@ const useChat = ({ containerRef }: IuseChat) => {
         }
     };
     useEffect(() => {
+        if (notification) {
+            setChat([...(Array.isArray(chat) ? chat : []), notification]);
+            setNotification(null);
+        }
+    }, [notification]);
+    useEffect(() => {
         if (data.user) {
             socket.auth = { username: data.user.nickname };
             socket.connect();
@@ -50,6 +66,18 @@ const useChat = ({ containerRef }: IuseChat) => {
                 setChat([...data]);
             });
 
+            socket.on('user-joined', (username: string) => {
+                setNotification({
+                    ...formatWelcomeMessage(username),
+                    type: 'joined',
+                });
+            });
+            socket.on('user-left', (username: string) => {
+                setNotification({
+                    ...formatWelcomeMessage(username),
+                    type: 'left',
+                });
+            });
             socket.on('receive_message', (chats: TChat[]) => {
                 setChat([...(Array.isArray(chat) ? chat : []), ...chats]);
             });

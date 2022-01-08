@@ -5,7 +5,7 @@
 .chat-form {
     width: 100%;
 }
-.chat-form div {
+.chat-form div:nth-child(1) {
     flex: 1;
 }
 .chat-form legend {
@@ -27,23 +27,25 @@
     display: flex;
     flex-direction: row-reverse;
 }
-.chat-node > div:nth-child(1) {
+.chat-node > a:nth-child(1) {
     border-radius: 100%;
     width: 30px;
     height: 30px;
     flex-shrink: 0;
+    display: block;
     overflow: hidden;
 }
-.chat-node.opposite > div:nth-child(1) {
+.chat-node.opposite > a:nth-child(1) {
     border-radius: 100%;
     width: 30px;
     height: 30px;
     overflow: hidden;
+    display: block;
 }
-.chat-node > div:nth-child(1) img {
+.chat-node > a img {
     object-fit: cover;
 }
-.chat-node > div:nth-child(2) > div:nth-child(1) {
+.chat-node > div > div:nth-child(1) {
     position: relative;
     top: -10px;
     max-width: calc(100vw - 65px);
@@ -56,18 +58,18 @@
 .seen-container {
     height: initial !important;
 }
-.chat-node > div:nth-child(2) {
+.chat-node > .chat-holder {
     padding-left: 35px;
     padding-right: 8px;
 }
-.chat-node.opposite > div:nth-child(2) > .seen-container {
+.chat-node.opposite > .chat-holder > .seen-container {
     margin-top: 22px;
     display: flex;
     align-items: center;
     width: 100%;
     padding-left: 8px;
 }
-.chat-node.left-side > div:nth-child(2) > .seen-container {
+.chat-node.left-side > .chat-holder > .seen-container {
     position: relative;
     top: -8px;
     display: flex;
@@ -75,7 +77,7 @@
     width: 100%;
     padding-left: 8px;
 }
-.chat-node.opposite > div:nth-child(2) > div:nth-child(1) {
+.chat-node.opposite > .chat-holder > div:nth-child(1) {
     position: relative;
     top: 20px;
     display: inline-block;
@@ -85,4 +87,11 @@
     border-bottom-right-radius: 15px;
     border-bottom-left-radius: 15px;
     border-top-right-radius: 0px;
+}
+.preference-bubble {
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    border: none;
+    outline: none;
 }

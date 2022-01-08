@@ -21,6 +21,7 @@ const App: FunctionComponent<{ socket: any }> = ({ socket }) => {
                 <Router>
                     <Home path='/' />
                     <Profile path='/profile' />
+                    <Profile path='/profile/:id' />
                 </Router>
             </SocketContext.Provider>
         </Auth0Provider>

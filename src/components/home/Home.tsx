@@ -6,6 +6,7 @@ import styles from './Home.module.css';
 import arrow from '../../assets/arrow.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import UserPreference from '../compounds/UserPreference';
 
 const Home: FunctionComponent<RouteComponentProps> = () => {
     const { user } = useAuth0();
@@ -28,7 +29,9 @@ const Home: FunctionComponent<RouteComponentProps> = () => {
     }
     return (
         <div>
-            <Chat />
+            <UserPreference>
+                <Chat />
+            </UserPreference>
         </div>
     );
 };

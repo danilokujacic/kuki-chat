@@ -6,17 +6,29 @@ import useChat from '../../hooks/useChat';
 
 export type TUser = { picture: string; username: string };
 
-export type TChat = {
+type TCasualChat = {
     profile: TUser;
     message: string;
     date: Date;
     chatDate: string;
     seen: TUser[];
 };
+export type TNotification = {
+    rank: string;
+    username: string;
+    comment: string;
+    type: 'joined' | 'left';
+};
+
+export type TChat = TCasualChat | TNotification;
+
+export const isNotification = (x: TChat): x is TNotification =>
+    Boolean((x as TNotification).rank);
 
 const Chat: FunctionComponent = () => {
     const [chatRef, setChatRef] = useState<HTMLDivElement | null>(null);
     const { chat, user } = useChat({ containerRef: chatRef });
+
     let chatTemplate;
 
     if (!user) {
